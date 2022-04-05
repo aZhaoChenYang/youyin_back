@@ -1,0 +1,22 @@
+app:
+  Addr: 127.0.0.1
+  Port: 8084
+mysql:
+  DriverName: mysql
+  Database: youyin
+  Port: 3306
+  UserName: root
+  Password: 123456
+  Host: 127.0.0.1
+  Charset: utf8
+redis:
+  Host: 127.0.0.1
+  Port: 6379
+  Password:
+  Database: 0
+log:
+  Level: debug
+  Filename: web_app.log
+  Max_size: 200
+  Max_age: 30
+  Max_backups: 7
