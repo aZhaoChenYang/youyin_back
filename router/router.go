@@ -12,6 +12,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 		v1 := api.Group("/v1.0")
 		{
 			v1.POST("/login", controller.Login)
+			v1.POST("/upload", middleware.JwtAuthMiddleware(), controller.Upload)
 			// 管理员路由
 			admin := v1.Group("/admin", middleware.JwtAuthMiddleware())
 			{
@@ -20,11 +21,14 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 				admin.DELETE("", controller.DeleteAdmin)
 				admin.PUT("", controller.UpdateAdmin)
 			}
-			//// 门店路由
-			//shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
-			//{
-			//
-			//}
+			// 门店路由
+			shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
+			{
+				shop.POST("", controller.AddShop)
+				shop.GET("", controller.GetShop)
+				shop.PUT("", controller.UpdateShop)
+				shop.DELETE("", controller.DeleteShop)
+			}
 			tag := v1.Group("/tag", middleware.JwtAuthMiddleware())
 			{
 				tag.POST("", controller.AddTag)
@@ -37,6 +41,14 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 				people.GET("", controller.GetPeople)
 				people.DELETE("", controller.DeletePeople)
 			}
+			swiper := v1.Group("/swiper", middleware.JwtAuthMiddleware())
+			{
+				swiper.POST("", controller.AddSwiper)
+				swiper.GET("", controller.GetSwiper)
+				swiper.PUT("", controller.UpdateSwiper)
+				swiper.DELETE("", controller.DeleteSwiper)
+			}
+
 		}
 
 	}

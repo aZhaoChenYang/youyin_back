@@ -10,7 +10,7 @@ import (
 )
 
 type tag struct {
-	Name string `bind:"required"`
+	Name string `json:"name" bind:"required"`
 }
 
 func AddTag(c *gin.Context) {

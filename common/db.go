@@ -26,8 +26,10 @@ func InitDB() *gorm.DB {
 		charset)
 	db, err := gorm.Open(driverName, args)
 	db.LogMode(true)
+	db.AutoMigrate(&model.Setting{})
 	db.AutoMigrate(&model.Admin{})
 	db.AutoMigrate(&model.Shop{})
+	db.AutoMigrate(&model.Swiper{})
 	db.AutoMigrate(&model.Tag{})
 	db.AutoMigrate(&model.People{})
 	if err != nil {

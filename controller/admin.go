@@ -51,7 +51,7 @@ func Login(c *gin.Context) {
 	var request model.Admin
 	if err := c.BindJSON(&request); err != nil {
 		zap.L().Error(err.Error())
-		response.Response(c, http.StatusBadRequest, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数有误"})
+		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数有误"})
 		return
 	}
 	username := request.Username

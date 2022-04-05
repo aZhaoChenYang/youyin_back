@@ -10,7 +10,7 @@ import (
 )
 
 type people struct {
-	Number int `bind:"required"`
+	Number int `json:"number" bind:"required"`
 }
 
 func AddPeople(c *gin.Context) {

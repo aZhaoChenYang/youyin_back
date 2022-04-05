@@ -4,11 +4,12 @@ import "github.com/jinzhu/gorm"
 
 type Shop struct {
 	gorm.Model
-	Name    string  `gorm:"not null;unique"`
-	Address string  `gorm:"not null"`
-	Mobile  string  `gorm:"not null"`
-	Lat     float32 `gorm:"not null"`
-	Long    float32 `gorm:"not null"`
+	Name    string   `gorm:"not null;unique" json:"name"`
+	Address string   `gorm:"not null" json:"address"`
+	Mobile  string   `gorm:"not null" json:"mobile"`
+	Lat     float32  `gorm:"not null" json:"lat"`
+	Long    float32  `gorm:"not null" json:"long"`
+	Swipers []Swiper `gorm:"foreignKey:ShopName;references:Name"`
 }
 
 // TableName 表名
