@@ -17,34 +17,34 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 			admin := v1.Group("/admin", middleware.JwtAuthMiddleware())
 			{
 				admin.POST("", controller.AddAdmin)
-				admin.GET("", controller.GetAdmin)
+				admin.GET("", controller.GetAllAdmin)
 				admin.DELETE("", controller.DeleteAdmin)
 				admin.PUT("", controller.UpdateAdmin)
 			}
-			// 门店路由
-			shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
-			{
-				shop.POST("", controller.AddShop)
-				shop.GET("", controller.GetShop)
-				shop.PUT("", controller.UpdateShop)
-				shop.DELETE("", controller.DeleteShop)
-			}
+			//// 门店路由
+			//shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
+			//{
+			//	shop.POST("", controller.AddShop)
+			//	shop.GET("", controller.GetShop)
+			//	shop.PUT("", controller.UpdateShop)
+			//	shop.DELETE("", controller.DeleteShop)
+			//}
 			tag := v1.Group("/tag", middleware.JwtAuthMiddleware())
 			{
 				tag.POST("", controller.AddTag)
-				tag.GET("", controller.GetTag)
+				tag.GET("", controller.GetTagList)
 				tag.DELETE("", controller.DeleteTag)
 			}
 			people := v1.Group("/people", middleware.JwtAuthMiddleware())
 			{
 				people.POST("", controller.AddPeople)
-				people.GET("", controller.GetPeople)
+				people.GET("", controller.GetPeopleList)
 				people.DELETE("", controller.DeletePeople)
 			}
 			swiper := v1.Group("/swiper", middleware.JwtAuthMiddleware())
 			{
 				swiper.POST("", controller.AddSwiper)
-				swiper.GET("", controller.GetSwiper)
+				swiper.GET("", controller.GetSwiperList)
 				swiper.PUT("", controller.UpdateSwiper)
 				swiper.DELETE("", controller.DeleteSwiper)
 			}

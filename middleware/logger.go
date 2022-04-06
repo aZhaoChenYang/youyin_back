@@ -43,22 +43,16 @@ func Init() (err error) {
 }
 
 func getEncoder() zapcore.Encoder {
-	// 使用zap提供的 NewProductionEncoderConfig
 	encoderConfig := zap.NewProductionEncoderConfig()
-	// 设置时间格式
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	// 时间的key
 	encoderConfig.TimeKey = "time"
-	// 级别
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	// 显示调用者信息
+	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
-	// 返回json 格式的 日志编辑器
-	return zapcore.NewJSONEncoder(encoderConfig)
+	return zapcore.NewConsoleEncoder(encoderConfig)
 }
 
 func GetLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.WriteSyncer {
-	// 使用 lumberjack 归档切片日志
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   filename,
 		MaxSize:    maxSize,
@@ -114,7 +108,6 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
-					// If the connection is dead, we can't write a status to it.
 					c.Error(err.(error)) // nolint: errcheck
 					c.Abort()
 					return

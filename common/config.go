@@ -3,13 +3,12 @@ package common
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"youyin/model"
 )
 
 type Config struct {
-	MYSQL model.MysqlConfig
-	APP   model.APPConfig
-	LOG   model.LogConfig
+	MYSQL MysqlConfig
+	APP   APPConfig
+	LOG   LogConfig
 }
 
 var Conf = &Config{}

@@ -1,97 +1,75 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"youyin/common"
-	"youyin/common/reqstatus"
+	"net/http"
+	"strconv"
 	"youyin/model"
 	"youyin/response"
 )
 
+//添加轮播图
 func AddSwiper(c *gin.Context) {
-	type reqswiper struct {
-		Imgurl   string `json:"imgurl" bind:"required"`
-		ShopName string `json:"shop_name" bind:"required"`
-	}
-	var request reqswiper
-	err := c.BindJSON(&request)
+	var swiper model.Swiper
+	err := c.BindJSON(&swiper)
 	if err != nil {
-		zap.L().Error("参数不完整")
-		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数不完整"})
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	db := common.GetDB()
-	if err := db.Create(&model.Swiper{Imgurl: request.Imgurl, ShopName: request.ShopName}).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "添加失败"})
+	if err = swiper.Add(); err != nil {
+		zap.L().Error("添加人数失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "添加成功"})
-}
-
-func GetSwiper(c *gin.Context) {
-	var reqswipers []model.Swiper
-	db := common.GetDB()
-	if err := db.Find(&reqswipers).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "查询失败"})
-		return
-	}
-	type Swipers struct {
-		ID        uint   `json:"id"`
-		Img_url   string `json:"img_url"`
-		Shop_name string `json:"shop_name"`
-	}
-	var swipers []Swipers
-	for _, reqswiper := range reqswipers {
-
-		swiper := Swipers{
-			ID:        reqswiper.ID,
-			Img_url:   reqswiper.Imgurl,
-			Shop_name: reqswiper.ShopName,
-		}
-		swipers = append(swipers, swiper)
-	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "查询成功", "data": swipers})
+	response.Success(c, nil)
 
 }
 
+//修改轮播图
 func UpdateSwiper(c *gin.Context) {
-	type reqswiper struct {
-		ID       uint   `json:"id" bind:"required"`
-		Imgurl   string `json:"img_url" bind:"required"`
-		ShopName string `json:"shop_name" bind:"required"`
-	}
-	var request reqswiper
-	err := c.BindJSON(&request)
+	var swiper model.Swiper
+	err := c.BindJSON(&swiper)
 	if err != nil {
-		zap.L().Error("参数不完整")
-		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数不完整"})
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println(request)
-	db := common.GetDB()
-	if err := db.Model(&model.Swiper{}).Where("id=?", request.ID).Update(map[string]interface{}{"imgurl": request.Imgurl, "shop_name": request.ShopName}).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "修改失败"})
+	if err = swiper.Update(); err != nil {
+		zap.L().Error("修改轮播图失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
 	}
-
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "修改成功"})
+	response.Success(c, nil)
 }
 
+// 删除轮播图
 func DeleteSwiper(c *gin.Context) {
-	id := c.DefaultQuery("id", "")
-	if id == "" {
-		zap.L().Error("参数不全")
-		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数不全"})
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
 	}
-	db := common.GetDB()
-	if err := db.Where("id=?", id).Delete(&model.Swiper{}).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "删除失败"})
+	var swiper model.Swiper
+	swiper.ID = uint(id)
+	if err = swiper.Delete(); err != nil {
+		zap.L().Error("删除轮播图失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
 	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "删除成功"})
+	response.Success(c, nil)
+}
 
+// 获取轮播图列表
+func GetSwiperList(c *gin.Context) {
+	var swiper model.Swiper
+	list, err := swiper.GetList()
+	if err != nil {
+		zap.L().Error("获取轮播图列表失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, list)
 }

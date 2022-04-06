@@ -3,55 +3,54 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"youyin/common"
-	"youyin/common/reqstatus"
+	"net/http"
+	"strconv"
 	"youyin/model"
 	"youyin/response"
 )
 
-type tag struct {
-	Name string `json:"name" bind:"required"`
-}
-
+// AddTag 添加标签
 func AddTag(c *gin.Context) {
-
-	var request tag
-	err := c.BindJSON(&request)
-	if err != nil {
-		zap.L().Error("参数不完整")
-		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数不完整"})
+	var tag model.Tag
+	if err := c.BindJSON(&tag); err != nil {
+		zap.L().Error("绑定参数失败", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	db := common.GetDB()
-	if err = db.Create(&model.Tag{Name: request.Name}).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "添加失败"})
+	if err := tag.Add(); err != nil {
+		zap.L().Error("添加标签失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "添加成功"})
-
+	response.Success(c, nil)
 }
 
-func GetTag(c *gin.Context) {
-	var tags []model.Tag
-	db := common.GetDB()
-	if err := db.Find(&tags).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "数据库查询失败"})
-		return
-	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "查询成功", "data": tags})
-}
-
+// DeleteTag 删除标签
 func DeleteTag(c *gin.Context) {
-	id := c.DefaultQuery("id", "")
-
-	db := common.GetDB()
-	if err := db.Where("id=?", id).Delete(&model.Tag{}).Error; err != nil {
-		zap.L().Error(err.Error())
-		response.Success(c, gin.H{"errno": reqstatus.DBERR, "errmsg": "删除失败"})
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "删除成功"})
+	var tag model.Tag
+	tag.ID = uint(id)
+	if err := tag.Delete(); err != nil {
+		zap.L().Error("删除标签失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, nil)
+}
 
+// GetTagList 获取标签列表
+func GetTagList(c *gin.Context) {
+	var tag model.Tag
+	list, err := tag.GetList()
+	if err != nil {
+		zap.L().Error("获取标签列表失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, list)
 }

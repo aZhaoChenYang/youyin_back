@@ -6,8 +6,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"go.uber.org/zap"
 	"mime/multipart"
-	"youyin/common"
-	"youyin/common/reqstatus"
+	"net/http"
 	"youyin/model"
 	"youyin/response"
 )
@@ -18,17 +17,18 @@ import (
 func Upload(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("img")
 	if err != nil {
-		response.Success(c, gin.H{"errno": reqstatus.PARAMERR, "errmsg": "参数不完整"})
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusServiceUnavailable, err.Error())
 		return
 	}
 	fileSize := fileHeader.Size
 	url, code := uploadFile(file, fileSize)
 	if code != 0 {
-		response.Success(c, gin.H{"errno": reqstatus.THIRDERR, "errmsg": "第三方库调用错误"})
+		zap.L().Error("上传失败", zap.Error(err))
+		response.Error(c, http.StatusServiceUnavailable, "上传失败")
 		return
 	}
-	response.Success(c, gin.H{"errno": reqstatus.OK, "errmsg": "上传成功", "data": url})
-
+	response.Success(c, url)
 }
 
 func uploadFile(file multipart.File, fileSize int64) (string, int) {
@@ -56,18 +56,18 @@ func uploadFile(file multipart.File, fileSize int64) (string, int) {
 	err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
 	if err != nil {
 		zap.L().Error(err.Error())
-		return "", reqstatus.THIRDERR
+		return "", http.StatusInternalServerError
 	}
 	url := ImgUrl + ret.Key
-	return url, reqstatus.OK
+	return url, 0
 }
 
 func parseConfig() (string, string, string, int) {
 	var set []model.Setting
-	db := common.GetDB()
+	db := model.GetDB()
 	if err := db.Where("type=3").Find(&set).Error; err != nil {
 		zap.L().Error(err.Error())
-		return "", "", "", reqstatus.DBERR
+		return "", "", "", http.StatusInternalServerError
 	}
 	var (
 		accessKey, secretKey, url string
@@ -81,5 +81,5 @@ func parseConfig() (string, string, string, int) {
 			url = setting.Value
 		}
 	}
-	return accessKey, secretKey, url, reqstatus.OK
+	return accessKey, secretKey, url, 0
 }
