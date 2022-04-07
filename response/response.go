@@ -5,7 +5,7 @@ import (
 )
 
 func Error(c *gin.Context, code int, message string) {
-	c.JSON(code, gin.H{
+	c.JSON(200, gin.H{
 		"code":    code,
 		"message": message,
 	})

@@ -2,15 +2,15 @@ package model
 
 import (
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"youyin/common"
 )
 
 var DB *gorm.DB
 
 func InitDB() *gorm.DB {
-	driverName := common.Conf.MYSQL.DriverName
 	host := common.Conf.MYSQL.Host
 	port := common.Conf.MYSQL.Port
 	username := common.Conf.MYSQL.Username
@@ -24,9 +24,10 @@ func InitDB() *gorm.DB {
 		port,
 		database,
 		charset)
-	db, err := gorm.Open(driverName, args)
-	db.LogMode(true)
-	db.AutoMigrate(&Setting{})
+	db, err := gorm.Open(mysql.Open(args), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	err = db.AutoMigrate(&Setting{})
 	db.AutoMigrate(&Admin{})
 	db.AutoMigrate(&Shop{})
 	db.AutoMigrate(&Swiper{})

@@ -21,14 +21,14 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 				admin.DELETE("", controller.DeleteAdmin)
 				admin.PUT("", controller.UpdateAdmin)
 			}
-			//// 门店路由
-			//shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
-			//{
-			//	shop.POST("", controller.AddShop)
-			//	shop.GET("", controller.GetShop)
-			//	shop.PUT("", controller.UpdateShop)
-			//	shop.DELETE("", controller.DeleteShop)
-			//}
+			// 门店路由
+			shop := v1.Group("/shop", middleware.JwtAuthMiddleware())
+			{
+				shop.POST("", controller.AddShop)
+				shop.GET("", controller.GetShopList)
+				shop.PUT("", controller.UpdateShop)
+				shop.DELETE("", controller.DeleteShop)
+			}
 			tag := v1.Group("/tag", middleware.JwtAuthMiddleware())
 			{
 				tag.POST("", controller.AddTag)

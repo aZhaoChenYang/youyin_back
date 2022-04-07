@@ -16,14 +16,14 @@ func (u *People) Add() error {
 }
 
 func (u *People) Update() error {
-	return DB.Save(u).Error
+	return DB.Model(u).Updates(u).Error
 }
 
 func (u *People) Delete() error {
 	return DB.Delete(u).Error
 }
 
-func (u *People) GetList() (interface{}, error) {
+func (u *People) GetList() ([]People, error) {
 	var list []People
 	err := DB.Find(&list).Error
 	return list, err

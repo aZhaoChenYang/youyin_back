@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 type Tag struct {
 	gorm.Model
-	Name string `gorm:"not null" json:"name" binding:"required"`
+	Name string `gorm:"not null;size:10" json:"name" binding:"required"`
 }
 
 func (u *Tag) TableName() string {
@@ -16,7 +16,7 @@ func (u *Tag) Add() error {
 }
 
 func (u *Tag) Update() error {
-	return GetDB().Save(u).Error
+	return GetDB().Model(u).Updates(u).Error
 }
 
 func (u *Tag) Delete() error {

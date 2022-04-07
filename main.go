@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"youyin/common"
 	"youyin/middleware"
 	"youyin/model"
@@ -19,16 +18,6 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.GinLogger(), middleware.GinRecovery(true))
 	model.InitDB()
-
-	//创建DB实例进行数据库操作
-	db := model.GetDB()
-	//延迟关闭数据库
-	defer func(db *gorm.DB) {
-		err := db.Close()
-		if err != nil {
-			fmt.Println("关闭数据库失败")
-		}
-	}(db)
 
 	//r.Use(middleware.Cors())
 	r = router.InitRouter(r)

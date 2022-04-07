@@ -7,9 +7,9 @@ import (
 
 type Admin struct {
 	gorm.Model
-	Username string `gorm:"not null;unique" json:"username" binding:"required"`
-	Password string `gorm:"not null" json:"password" binding:"required"`
-	Nickname string `gorm:"not null" json:"nickname"`
+	Username string `gorm:"not null;unique;size:20" json:"username" binding:"required"`
+	Password string `gorm:"not null;size:128" json:"password" binding:"required"`
+	Nickname string `gorm:"not null;size:20" json:"nickname"`
 }
 
 // TableName 表名
@@ -23,7 +23,7 @@ func (u *Admin) Create() error {
 }
 
 // GetAll 获取全部信息
-func (u *Admin) GetAll() (interface{}, error) {
+func (u *Admin) GetAll() ([]Admin, error) {
 	var admins []Admin
 	err := GetDB().Select("id, username, nickname").Find(&admins).Error
 	return admins, err
@@ -31,7 +31,7 @@ func (u *Admin) GetAll() (interface{}, error) {
 
 // Update 更新一条记录
 func (u *Admin) Update() error {
-	return GetDB().Save(u).Error
+	return GetDB().Model(u).Updates(u).Error
 }
 
 // Delete 删除一条记录

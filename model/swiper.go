@@ -4,8 +4,8 @@ import "github.com/jinzhu/gorm"
 
 type Swiper struct {
 	gorm.Model
-	Imgurl   string `gorm:"not null" json:"imgurl"`
-	ShopName string `gorm:"not null" json:"shopName"`
+	Imgurl   string `gorm:"size:128;not null" json:"imgurl" binding:"required"`
+	ShopName string `gorm:"size:20;not null" json:"shop_name" binding:"required"`
 }
 
 // TableName 表名
@@ -17,7 +17,7 @@ func (u *Swiper) Add() error {
 	return DB.Create(u).Error
 }
 func (u *Swiper) Update() error {
-	return DB.Save(u).Error
+	return DB.Model(u).Updates(u).Error
 }
 func (u *Swiper) Delete() error {
 	return DB.Delete(u).Error

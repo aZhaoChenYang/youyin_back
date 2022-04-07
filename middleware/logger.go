@@ -24,7 +24,6 @@ func Init() (err error) {
 		common.Conf.LOG.Max_backups,
 		common.Conf.LOG.Max_age,
 	)
-
 	encoder := getEncoder()
 	// 定义一个日志级别类型指针
 	var l = new(zapcore.Level)
@@ -101,7 +100,6 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 						}
 					}
 				}
-
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				if brokenPipe {
 					logger.Error(c.Request.URL.Path,
