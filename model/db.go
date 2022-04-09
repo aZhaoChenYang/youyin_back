@@ -27,12 +27,13 @@ func InitDB() *gorm.DB {
 	db, err := gorm.Open(mysql.Open(args), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	err = db.AutoMigrate(&Setting{})
+	db.AutoMigrate(&Setting{})
 	db.AutoMigrate(&Admin{})
 	db.AutoMigrate(&Shop{})
 	db.AutoMigrate(&Swiper{})
 	db.AutoMigrate(&Tag{})
 	db.AutoMigrate(&People{})
+	db.AutoMigrate(&Script{})
 	if err != nil {
 		panic("连接数据库失败" + err.Error())
 	}

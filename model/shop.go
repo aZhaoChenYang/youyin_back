@@ -12,7 +12,8 @@ type Shop struct {
 	Mobile  string   `gorm:"not null;size:11" json:"mobile" binding:"required"`
 	Lat     float32  `gorm:"not null" json:"lat" binding:"required"`
 	Long    float32  `gorm:"not null" json:"long" binding:"required"`
-	Swipers []Swiper `gorm:"foreignKey:ShopName;references:Name" json:"-"`
+	Swipers []Swiper `json:"-"`
+	Scripts []Script `json:"-"`
 }
 
 var ForeignkeyError = errors.New("该店铺下还有轮播图，不能删除")

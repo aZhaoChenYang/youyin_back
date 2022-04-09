@@ -28,3 +28,17 @@ func (u *People) GetList() ([]People, error) {
 	err := DB.Find(&list).Error
 	return list, err
 }
+
+func (u *People) GetFromIDS(ids []uint) ([]People, error) {
+	var people []People
+	err := DB.Where("id in (?)", ids).Find(&people).Error
+	return people, err
+}
+
+func (u *People) GetIDSFrom(peoples []People) ([]uint, error) {
+	var peppleids []uint
+	for _, people := range peoples {
+		peppleids = append(peppleids, people.ID)
+	}
+	return peppleids, nil
+}

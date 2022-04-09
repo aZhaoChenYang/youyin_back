@@ -1,6 +1,8 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Tag struct {
 	gorm.Model
@@ -27,4 +29,18 @@ func (u *Tag) GetList() (interface{}, error) {
 	var list []Tag
 	err := GetDB().Find(&list).Error
 	return list, err
+}
+
+func (u *Tag) GetFromIDS(ids []uint) ([]Tag, error) {
+	var tag []Tag
+	err := DB.Where("id in (?)", ids).Find(&tag).Error
+	return tag, err
+}
+
+func (u *Tag) GetIDSFrom(ids []Tag) ([]uint, error) {
+	var tag []uint
+	for _, id := range ids {
+		tag = append(tag, id.ID)
+	}
+	return tag, nil
 }

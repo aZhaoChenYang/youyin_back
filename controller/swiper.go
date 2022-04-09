@@ -46,10 +46,10 @@ func UpdateSwiper(c *gin.Context) {
 
 // 删除轮播图
 func DeleteSwiper(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		zap.L().Error("参数不完整", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.Error(c, http.StatusBadRequest, "参数不完整")
 		return
 	}
 	var swiper model.Swiper
