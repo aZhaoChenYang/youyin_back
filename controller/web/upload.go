@@ -1,4 +1,4 @@
-package controller
+package web
 
 import (
 	"context"
@@ -73,11 +73,11 @@ func parseConfig() (string, string, string, int) {
 		accessKey, secretKey, url string
 	)
 	for _, setting := range set {
-		if setting.Key == "ak" {
+		if setting.AppKey == "ak" {
 			accessKey = setting.Value
-		} else if setting.Key == "sk" {
+		} else if setting.AppKey == "sk" {
 			secretKey = setting.Value
-		} else if setting.Key == "url" {
+		} else if setting.AppKey == "url" {
 			url = setting.Value
 		}
 	}

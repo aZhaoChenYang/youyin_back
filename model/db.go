@@ -34,6 +34,7 @@ func InitDB() *gorm.DB {
 	db.AutoMigrate(&Tag{})
 	db.AutoMigrate(&People{})
 	db.AutoMigrate(&Script{})
+	db.AutoMigrate(&User{})
 	if err != nil {
 		panic("连接数据库失败" + err.Error())
 	}

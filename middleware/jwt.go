@@ -24,13 +24,14 @@ func JwtAuthMiddleware() func(c *gin.Context) {
 		}
 
 		// 校验token
-		_, err := common.CheckToken(token)
+		reqToken, err := common.CheckToken(token)
 		if err != nil {
 			response.Error(c, http.StatusUnauthorized, "请先登录")
 			c.Abort()
 			return
 		}
 		// 通过，放行
+		c.Set("userId", reqToken.UserId)
 		c.Next()
 	}
 }

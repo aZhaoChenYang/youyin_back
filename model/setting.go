@@ -6,7 +6,7 @@ import (
 
 type Setting struct {
 	gorm.Model
-	Key    string `gorm:"unique;nut null" json:"key"`
+	AppKey string `gorm:"unique;nut null" json:"key"`
 	Value  string `gorm:"nut null" json:"value"`
 	Value1 string `json:"value1"`
 	Desc   string `gorm:"nut null" json:"desc"`
@@ -15,7 +15,7 @@ type Setting struct {
 }
 
 func (u *Setting) TableName() string {
-	return "yy_setting"
+	return "yy_settings"
 }
 
 // GetSettingByType 根据type获取设置
@@ -28,4 +28,16 @@ func (u *Setting) GetList(typeid int) ([]Setting, error) {
 // 修改设置
 func (u *Setting) Update() error {
 	return GetDB().Model(u).Updates(u).Error
+}
+
+// 根据key获取value，value1
+func (u *Setting) GetValue(key string) (string, string, error) {
+	err := GetDB().Where("app_key = ?", key).First(u).Error
+	return u.Value, u.Value1, err
+}
+
+// 根据key获取value
+func (u *Setting) GetValueByKey(key string) (string, error) {
+	err := GetDB().Where("app_key = ?", key).First(u).Error
+	return u.Value, err
 }
