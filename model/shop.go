@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	"youyin/common"
 )
 
 type Shop struct {
@@ -47,4 +48,13 @@ func (u *Shop) GetList() ([]Shop, error) {
 	var shops []Shop
 	err := GetDB().Find(&shops).Error
 	return shops, err
+}
+
+func (u *Shop) GetShop() (Shop, error) {
+	var shop Shop
+	err := GetDB().First(&shop).Error
+	long, lat := common.BD09toGCJ02(float64(shop.Long), float64(shop.Lat))
+	shop.Lat = float32(lat)
+	shop.Long = float32(long)
+	return shop, err
 }

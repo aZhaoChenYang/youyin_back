@@ -75,7 +75,8 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 		{
 			v1_0.GET("/swiper", web.GetSwiperList)
 			v1_0.POST("/login", App.Login)
-			v1_0.POST("/updateInfo", middleware.JwtAuthMiddleware(), App.UpdateUserInfo)
+			v1_0.GET("/shop", App.GetShopList)
+			v1_0.POST("/user/phone", middleware.JwtAuthMiddleware(), App.UpdateUserPhone)
 		}
 
 	}

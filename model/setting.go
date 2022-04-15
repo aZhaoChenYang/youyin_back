@@ -41,3 +41,9 @@ func (u *Setting) GetValueByKey(key string) (string, error) {
 	err := GetDB().Where("app_key = ?", key).First(u).Error
 	return u.Value, err
 }
+
+// 获取vip设置
+func (u *Setting) GetVipSetting(vip int) (string, error) {
+	err := GetDB().Where("type = 1 and switch = ?", vip).First(u).Error
+	return u.Desc, err
+}
