@@ -3,7 +3,6 @@ package web
 import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"youyin/model"
@@ -60,9 +59,7 @@ func DeleteShop(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, "参数不完整")
 		return
 	}
-	shop := model.Shop{
-		Model: gorm.Model{ID: uint(id)},
-	}
+	shop := model.Shop{ID: uint(id)}
 	err = shop.Delete()
 	if err != nil {
 		zap.L().Error("删除失败", zap.Error(err))

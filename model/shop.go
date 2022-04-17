@@ -2,19 +2,23 @@ package model
 
 import (
 	"errors"
-	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
+	"time"
 	"youyin/common"
 )
 
 type Shop struct {
-	gorm.Model
-	Name    string   `gorm:"not null;unique;size:20" json:"name" binding:"required"`
-	Address string   `gorm:"not null;size:255" json:"address" binding:"required"`
-	Mobile  string   `gorm:"not null;size:11" json:"mobile" binding:"required"`
-	Lat     float32  `gorm:"not null" json:"lat" binding:"required"`
-	Long    float32  `gorm:"not null" json:"long" binding:"required"`
-	Swipers []Swiper `json:"-"`
-	Scripts []Script `json:"-"`
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	Name      string                `gorm:"not null;uniqueIndex:idx_deleted_at;size:20" json:"name" binding:"required"`
+	Address   string                `gorm:"not null;size:255" json:"address" binding:"required"`
+	Mobile    string                `gorm:"not null;size:11" json:"mobile" binding:"required"`
+	Lat       float32               `gorm:"not null" json:"lat" binding:"required"`
+	Long      float32               `gorm:"not null" json:"long" binding:"required"`
+	Swipers   []Swiper              `json:"-"`
+	Scripts   []Script              `json:"-"`
 }
 
 var ForeignkeyError = errors.New("该店铺下还有轮播图，不能删除")

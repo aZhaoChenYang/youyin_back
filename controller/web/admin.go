@@ -2,9 +2,7 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 	"strconv"
 	"youyin/common"
 	"youyin/model"
@@ -14,16 +12,14 @@ import (
 // AddAdmin 添加管理员
 func AddAdmin(c *gin.Context) {
 	var admin model.Admin
-	err := c.ShouldBind(&admin)
+	err := c.BindJSON(&admin)
 	if err != nil {
-		zap.L().Error("绑定参数失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ParamError(c, err)
 		return
 	}
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
 	if err != nil {
-		zap.L().Error("加密密码失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.EncryptionError(c, err)
 		return
 	}
 	admin.Password = string(hashPassword)
@@ -34,8 +30,7 @@ func AddAdmin(c *gin.Context) {
 
 	err = admin.Create()
 	if err != nil {
-		zap.L().Error("添加管理员失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.DbError(c, err)
 		return
 	}
 	response.Success(c, nil)
@@ -43,11 +38,9 @@ func AddAdmin(c *gin.Context) {
 
 // 获取全部管理员
 func GetAllAdmin(c *gin.Context) {
-	var admin model.Admin
-	admins, err := admin.GetAll()
+	admins, err := (&model.Admin{}).GetAll()
 	if err != nil {
-		zap.L().Error("获取管理员失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.DbError(c, err)
 		return
 	}
 	response.Success(c, admins)
@@ -56,23 +49,20 @@ func GetAllAdmin(c *gin.Context) {
 // 更新管理员信息
 func UpdateAdmin(c *gin.Context) {
 	var admin model.Admin
-	err := c.ShouldBind(&admin)
+	err := c.BindJSON(&admin)
 	if err != nil {
-		zap.L().Error("绑定参数失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ParamError(c, err)
 		return
 	}
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
 	if err != nil {
-		zap.L().Error("加密密码失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.EncryptionError(c, err)
 		return
 	}
 	admin.Password = string(hashPassword)
 	err = admin.Update()
 	if err != nil {
-		zap.L().Error("更新管理员失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.DbError(c, err)
 		return
 	}
 	response.Success(c, nil)
@@ -82,15 +72,12 @@ func UpdateAdmin(c *gin.Context) {
 func DeleteAdmin(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
-		zap.L().Error("参数不完整", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ParamError(c, err)
 		return
 	}
-	admin := model.Admin{ID: uint(id)}
-	err = admin.Delete()
+	err = (&model.Admin{ID: uint(id)}).Delete()
 	if err != nil {
-		zap.L().Error("删除管理员失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.DbError(c, err)
 		return
 	}
 	response.Success(c, nil)
@@ -99,23 +86,20 @@ func DeleteAdmin(c *gin.Context) {
 // 登录
 func Login(c *gin.Context) {
 	var admin model.Admin
-	err := c.ShouldBind(&admin)
+	err := c.BindJSON(&admin)
 	if err != nil {
-		zap.L().Error("绑定参数失败", zap.Error(err))
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ParamError(c, err)
 		return
 	}
 	err = admin.Login()
 	if err != nil {
-		zap.L().Error("登录失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.DbError(c, err)
 		return
 	}
 	//生成token
 	token, err := common.GenToken(strconv.Itoa(int(admin.ID)))
 	if err != nil {
-		zap.L().Error("生成token失败", zap.Error(err))
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.GenTokenError(c, err)
 		return
 	}
 	response.Success(c, gin.H{"token": token})

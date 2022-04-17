@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"go.uber.org/zap"
@@ -17,15 +18,13 @@ import (
 func Upload(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("img")
 	if err != nil {
-		zap.L().Error("参数不完整", zap.Error(err))
-		response.Error(c, http.StatusServiceUnavailable, err.Error())
+		response.ParamError(c, err)
 		return
 	}
 	fileSize := fileHeader.Size
 	url, code := uploadFile(file, fileSize)
 	if code != 0 {
-		zap.L().Error("上传失败", zap.Error(err))
-		response.Error(c, http.StatusServiceUnavailable, "上传失败")
+		response.ThirdPartyError(c, fmt.Errorf("上传失败code:%d", code))
 		return
 	}
 	response.Success(c, url)

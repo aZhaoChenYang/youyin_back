@@ -38,3 +38,8 @@ func GenTokenError(c *gin.Context, err error) {
 	zap.L().Error("gen token error", zap.Error(err))
 	Error(c, 500, "生成token错误")
 }
+
+func EncryptionError(c *gin.Context, err error) {
+	zap.L().Error("encryption error", zap.Error(err))
+	Error(c, 500, "加密错误")
+}
