@@ -6,7 +6,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-gonic/gin v1.7.7
-	github.com/jinzhu/gorm v1.9.16
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/qiniu/go-sdk/v7 v7.11.1
 	github.com/spf13/viper v1.10.1
@@ -14,6 +13,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/gorm v1.23.4
+	gorm.io/plugin/soft_delete v1.1.0
 )
 
 require (

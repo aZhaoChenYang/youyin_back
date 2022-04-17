@@ -33,3 +33,16 @@ func (u *User) IsExist() bool {
 func (u *User) Update() error {
 	return DB.Model(u).Updates(u).Error
 }
+
+func (u *User) GetList() ([]User, error) {
+	var users []User
+	err := DB.Find(&users).Error
+	return users, err
+}
+
+// GetCount 获取剧本总数
+func (u *User) GetCount() (int64, error) {
+	var count int64
+	err := GetDB().Table("yy_user").Count(&count).Error
+	return count, err
+}

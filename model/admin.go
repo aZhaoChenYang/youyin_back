@@ -1,15 +1,19 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/plugin/soft_delete"
+	"time"
 )
 
 type Admin struct {
-	gorm.Model
-	Username string `gorm:"not null;unique;size:20" json:"username" binding:"required"`
-	Password string `gorm:"not null;size:128" json:"password" binding:"required"`
-	Nickname string `gorm:"not null;size:20" json:"nickname"`
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	Username  string                `gorm:"not null;uniqueIndex:idx_deleted_at;size:20" json:"username" binding:"required"`
+	Password  string                `gorm:"not null;size:128" json:"password" binding:"required"`
+	Nickname  string                `gorm:"not null;size:20" json:"nickname"`
 }
 
 // TableName 表名

@@ -1,12 +1,16 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/plugin/soft_delete"
+	"time"
 )
 
 type Tag struct {
-	gorm.Model
-	Name string `gorm:"not null;size:10" json:"name" binding:"required"`
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	Name      string                `gorm:"not null;size:10;uniqueIndex:idx_deleted_at" json:"name" binding:"required"`
 }
 
 func (u *Tag) TableName() string {

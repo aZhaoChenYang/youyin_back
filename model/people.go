@@ -1,10 +1,16 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import (
+	"gorm.io/plugin/soft_delete"
+	"time"
+)
 
 type People struct {
-	gorm.Model
-	Number int `gorm:"not null" json:"number" binding:"required"`
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	Number    int                   `gorm:"not null;uniqueIndex:idx_deleted_at" json:"number" binding:"required"`
 }
 
 func (u *People) TableName() string {

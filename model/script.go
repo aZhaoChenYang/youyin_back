@@ -2,6 +2,7 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 	"time"
 )
 
@@ -9,17 +10,18 @@ type Script struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Name      string   `gorm:"not null;unique;size:255" json:"title" binding:"required"`
-	ImgUrl    string   `gorm:"not null;size:255" json:"imgurl" binding:"required"`
-	Describe  string   `gorm:"not null;size:10240" json:"describe" binding:"required"`
-	Time      int      `gorm:"not null" json:"time" binding:"required"`
-	Boys      uint     `gorm:"not null" json:"boys" binding:"required"`
-	Girls     uint     `gorm:"not null" json:"girls" binding:"required"`
-	Price1    float32  `gorm:"not null" json:"price1" binding:"required"`
-	Price2    float32  `gorm:"not null" json:"price2" binding:"required"`
-	ShopID    uint     `gorm:"not null" json:"shop_id" binding:"required"`
-	Peoples   []People `gorm:"many2many:script_people"`
-	Tags      []Tag    `gorm:"many2many:script_tag"`
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	Name      string                `gorm:"not null;uniqueIndex:idx_deleted_at;size:255" json:"title" binding:"required"`
+	ImgUrl    string                `gorm:"not null;size:255" json:"imgurl" binding:"required"`
+	Describe  string                `gorm:"not null;size:10240" json:"describe" binding:"required"`
+	Time      int                   `gorm:"not null" json:"time" binding:"required"`
+	Boys      uint                  `gorm:"not null" json:"boys" binding:"required"`
+	Girls     uint                  `gorm:"not null" json:"girls" binding:"required"`
+	Price1    float32               `gorm:"not null" json:"price1" binding:"required"`
+	Price2    float32               `gorm:"not null" json:"price2" binding:"required"`
+	ShopID    uint                  `gorm:"not null" json:"shop_id" binding:"required"`
+	Peoples   []People              `gorm:"many2many:script_people"`
+	Tags      []Tag                 `gorm:"many2many:script_tag"`
 }
 
 type Jsonscript struct {
@@ -137,4 +139,11 @@ func (u *Script) Update() error {
 		}
 		return nil
 	})
+}
+
+// GetCount 获取剧本总数
+func (u *Script) GetCount() (int64, error) {
+	var count int64
+	err := GetDB().Table("yy_script").Count(&count).Error
+	return count, err
 }

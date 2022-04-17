@@ -2,7 +2,6 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -87,7 +86,7 @@ func DeleteAdmin(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	admin := model.Admin{Model: gorm.Model{ID: uint(id)}}
+	admin := model.Admin{ID: uint(id)}
 	err = admin.Delete()
 	if err != nil {
 		zap.L().Error("删除管理员失败", zap.Error(err))

@@ -14,6 +14,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 		{
 			v1.POST("/login", web.Login)
 			v1.POST("/upload", middleware.JwtAuthMiddleware(), web.Upload)
+			v1.GET("/index", middleware.JwtAuthMiddleware(), web.GetIndex)
 			//v1.POST("/upload", controller.Upload)
 			// 管理员路由
 			admin := v1.Group("/admin", middleware.JwtAuthMiddleware())
@@ -63,6 +64,11 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 
 				script.PUT("", web.UpdateScript)
 				script.DELETE("", web.DeleteScript)
+			}
+			user := v1.Group("/user", middleware.JwtAuthMiddleware())
+			{
+				user.GET("", web.GetUserList)
+				user.PUT("", web.UpdateUser)
 			}
 
 		}
