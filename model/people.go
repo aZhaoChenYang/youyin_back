@@ -6,10 +6,10 @@ import (
 )
 
 type People struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	ID        uint                  `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time             `json:"-"`
+	UpdatedAt time.Time             `json:"-"`
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at" json:"-"`
 	Number    int                   `gorm:"not null;uniqueIndex:idx_deleted_at" json:"number" binding:"required"`
 }
 

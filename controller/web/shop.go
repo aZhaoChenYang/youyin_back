@@ -72,3 +72,20 @@ func DeleteShop(c *gin.Context) {
 	}
 	response.Success(c, "删除成功")
 }
+
+func GetShopByID(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		zap.L().Error("参数不完整", zap.Error(err))
+		response.Error(c, http.StatusBadRequest, "参数不完整")
+		return
+	}
+	shop := model.Shop{ID: uint(id)}
+	_, err = shop.GetShopByID()
+	if err != nil {
+		zap.L().Error("获取失败", zap.Error(err))
+		response.Error(c, http.StatusInternalServerError, "获取失败")
+		return
+	}
+	response.Success(c, shop)
+}

@@ -15,6 +15,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 			v1.POST("/login", web.Login)
 			v1.POST("/upload", middleware.JwtAuthMiddleware(), web.Upload)
 			v1.GET("/index", middleware.JwtAuthMiddleware(), web.GetIndex)
+			v1.POST("/getUserInfo", middleware.JwtAuthMiddleware(), web.GetAdminInfo)
 			//v1.POST("/upload", controller.Upload)
 			// 管理员路由
 			admin := v1.Group("/admin", middleware.JwtAuthMiddleware())
@@ -31,6 +32,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 				shop.GET("", web.GetShopList)
 				shop.PUT("", web.UpdateShop)
 				shop.DELETE("", web.DeleteShop)
+				shop.GET("/get", web.GetShopByID)
 			}
 			tag := v1.Group("/tag", middleware.JwtAuthMiddleware())
 			{
@@ -69,6 +71,12 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 			{
 				user.GET("", web.GetUserList)
 				user.PUT("", web.UpdateUser)
+			}
+			order := v1.Group("/order", middleware.JwtAuthMiddleware())
+			{
+				order.POST("", web.AddOrder)
+				order.GET("", web.GetOrderList)
+				//order.PUT("", web.UpdateOrder)
 			}
 
 		}

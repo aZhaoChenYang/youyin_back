@@ -30,7 +30,7 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	err = db.AutoMigrate(&Setting{}, &Admin{}, &Shop{}, &Tag{}, &Swiper{}, &People{}, &Script{}, &User{})
+	err = db.AutoMigrate(&Setting{}, &Role{}, &Admin{}, &Shop{}, &Tag{}, &Swiper{}, &People{}, &Script{}, &User{}, &Order{})
 	if err != nil {
 		panic(err)
 	}

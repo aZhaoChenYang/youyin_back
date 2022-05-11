@@ -7,7 +7,7 @@ import (
 )
 
 type MyClaims struct {
-	UserId string `json:"user_id"`
+	UserId int `json:"user_id"`
 	jwt.StandardClaims
 }
 
@@ -16,7 +16,7 @@ var Secret = []byte("secret")
 const TokenExpireDuration = time.Hour * 24
 
 // GenToken 生成Token
-func GenToken(userId string) (string, error) {
+func GenToken(userId int) (string, error) {
 	claims := MyClaims{
 		userId,
 		jwt.StandardClaims{
@@ -24,7 +24,6 @@ func GenToken(userId string) (string, error) {
 			Issuer:    "gin-blog",
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(Secret)
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type Shop struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	ID        uint                  `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time             `json:"-"`
+	UpdatedAt time.Time             `json:"-"`
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at" json:"-"`
 	Name      string                `gorm:"not null;uniqueIndex:idx_deleted_at;size:20" json:"name" binding:"required"`
 	Address   string                `gorm:"not null;size:255" json:"address" binding:"required"`
 	Mobile    string                `gorm:"not null;size:11" json:"mobile" binding:"required"`
@@ -52,6 +52,10 @@ func (u *Shop) GetList() ([]Shop, error) {
 	var shops []Shop
 	err := GetDB().Find(&shops).Error
 	return shops, err
+}
+func (u *Shop) GetShopByID() (Shop, error) {
+	err := GetDB().First(u).Error
+	return *u, err
 }
 
 func (u *Shop) GetShop() (Shop, error) {

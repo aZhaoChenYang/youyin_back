@@ -7,18 +7,18 @@ import (
 )
 
 type Script struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at"`
+	ID        uint                  `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time             `json:"-"`
+	UpdatedAt time.Time             `json:"-"`
+	DeletedAt soft_delete.DeletedAt `gorm:"uniqueIndex:idx_deleted_at" json:"-"`
 	Name      string                `gorm:"not null;uniqueIndex:idx_deleted_at;size:255" json:"title" binding:"required"`
 	ImgUrl    string                `gorm:"not null;size:255" json:"imgurl" binding:"required"`
-	Describe  string                `gorm:"not null;size:10240" json:"describe" binding:"required"`
+	Describe  string                `gorm:"not null;size:10240" json:"describes" binding:"required"`
 	Time      int                   `gorm:"not null" json:"time" binding:"required"`
 	Boys      uint                  `gorm:"not null" json:"boys" binding:"required"`
 	Girls     uint                  `gorm:"not null" json:"girls" binding:"required"`
 	Price1    float32               `gorm:"not null" json:"price1" binding:"required"`
-	Price2    float32               `gorm:"not null" json:"price2" binding:"required"`
+	Price2    float32               `gorm:"not null" json:"price2"`
 	ShopID    uint                  `gorm:"not null" json:"shop_id" binding:"required"`
 	Peoples   []People              `gorm:"many2many:script_people"`
 	Tags      []Tag                 `gorm:"many2many:script_tag"`
@@ -28,15 +28,15 @@ type Jsonscript struct {
 	ID       uint    `json:"id"`
 	Name     string  `json:"title" binding:"required"`
 	ImgUrl   string  `json:"imgurl" binding:"required"`
-	Describe string  `json:"describe" binding:"required"`
+	Describe string  `json:"describes" binding:"required"`
 	Time     int     `json:"time" binding:"required"`
 	Boys     uint    `json:"boys"`
 	Girls    uint    `json:"girls"`
 	Price1   float32 `json:"price1" binding:"required"`
-	Price2   float32 `json:"price2" binding:"required"`
+	Price2   float32 `json:"price2"`
 	ShopID   uint    `json:"shop_id" binding:"required"`
-	Peoples  []uint  `json:"peoples" binding:"required"`
-	Tags     []uint  `json:"tags" binding:"required"`
+	Peoples  []uint  `json:"peoples"`
+	Tags     []uint  `json:"tags"`
 }
 
 type JsonBasescript struct {
@@ -46,7 +46,8 @@ type JsonBasescript struct {
 	Time     int    `json:"time"`
 	Boys     uint   `json:"boys"`
 	Girls    uint   `json:"girls"`
-	ShopName string `json:"shop_name"`
+	ShopId   uint   `json:"shop_id"`
+	ShopName string `json:"shop_name" gorm:"-"`
 }
 
 // TableName 表名
@@ -60,7 +61,15 @@ func (u *Script) Create() error {
 
 func (u *Script) GetList() ([]JsonBasescript, error) {
 	var jsonscripts []JsonBasescript
-	err := GetDB().Table("yy_script").Select("yy_script.id,yy_script.name,yy_script.img_url,yy_script.time,yy_script.boys,yy_script.girls,yy_shop.name as shop_name").Joins("left join yy_shop on yy_script.shop_id = yy_shop.id").Scan(&jsonscripts).Error
+	err := GetDB().Model(u).Find(&jsonscripts).Error
+	for i, jsonscript := range jsonscripts {
+		var shop Shop
+		err := GetDB().Model(&shop).Where("id = ?", jsonscript.ShopId).First(&shop).Error
+		if err != nil {
+			return nil, err
+		}
+		jsonscripts[i].ShopName = shop.Name
+	}
 	return jsonscripts, err
 }
 

@@ -91,7 +91,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	// 生成token
-	token, err := common.GenToken(strconv.Itoa(int(user.ID)))
+	token, err := common.GenToken(int(user.ID))
 	if err != nil {
 		response.GenTokenError(c, err)
 		return

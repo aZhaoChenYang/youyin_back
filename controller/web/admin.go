@@ -97,10 +97,21 @@ func Login(c *gin.Context) {
 		return
 	}
 	//生成token
-	token, err := common.GenToken(strconv.Itoa(int(admin.ID)))
+	token, err := common.GenToken(int(admin.ID))
 	if err != nil {
 		response.GenTokenError(c, err)
 		return
 	}
 	response.Success(c, gin.H{"token": token})
+}
+
+// 获取管理员信息
+func GetAdminInfo(c *gin.Context) {
+	id := c.GetInt("userId")
+	admin, err := (&model.Admin{ID: uint(id)}).GetByID()
+	if err != nil {
+		response.DbError(c, err)
+		return
+	}
+	response.Success(c, admin)
 }

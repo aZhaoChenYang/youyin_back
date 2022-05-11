@@ -1,6 +1,6 @@
 app:
   Addr: 0.0.0.0
-  Port: 8084
+  Port: 8085
 mysql:
   DriverName: mysql
   Database: youyin
