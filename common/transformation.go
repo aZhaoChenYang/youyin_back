@@ -14,7 +14,7 @@ const (
 	AXIS   = 6378245.0
 )
 
-//BD09toGCJ02 百度坐标系->火星坐标系
+// BD09toGCJ02 百度坐标系->火星坐标系
 func BD09toGCJ02(lon, lat float64) (float64, float64) {
 	x := lon - 0.0065
 	y := lat - 0.006
@@ -28,7 +28,7 @@ func BD09toGCJ02(lon, lat float64) (float64, float64) {
 	return gLon, gLat
 }
 
-//GCJ02toBD09 火星坐标系->百度坐标系
+// GCJ02toBD09 火星坐标系->百度坐标系
 func GCJ02toBD09(lon, lat float64) (float64, float64) {
 	z := math.Sqrt(lon*lon+lat*lat) + 0.00002*math.Sin(lat*X_PI)
 	theta := math.Atan2(lat, lon) + 0.000003*math.Cos(lon*X_PI)
@@ -39,7 +39,7 @@ func GCJ02toBD09(lon, lat float64) (float64, float64) {
 	return bdLon, bdLat
 }
 
-//WGS84toGCJ02 WGS84坐标系->火星坐标系
+// WGS84toGCJ02 WGS84坐标系->火星坐标系
 func WGS84toGCJ02(lon, lat float64) (float64, float64) {
 	if isOutOFChina(lon, lat) {
 		return lon, lat
@@ -50,7 +50,7 @@ func WGS84toGCJ02(lon, lat float64) (float64, float64) {
 	return mgLon, mgLat
 }
 
-//GCJ02toWGS84 火星坐标系->WGS84坐标系
+// GCJ02toWGS84 火星坐标系->WGS84坐标系
 func GCJ02toWGS84(lon, lat float64) (float64, float64) {
 	if isOutOFChina(lon, lat) {
 		return lon, lat
@@ -61,13 +61,13 @@ func GCJ02toWGS84(lon, lat float64) (float64, float64) {
 	return lon*2 - mgLon, lat*2 - mgLat
 }
 
-//BD09toWGS84 百度坐标系->WGS84坐标系
+// BD09toWGS84 百度坐标系->WGS84坐标系
 func BD09toWGS84(lon, lat float64) (float64, float64) {
 	lon, lat = BD09toGCJ02(lon, lat)
 	return GCJ02toWGS84(lon, lat)
 }
 
-//WGS84toBD09 WGS84坐标系->百度坐标系
+// WGS84toBD09 WGS84坐标系->百度坐标系
 func WGS84toBD09(lon, lat float64) (float64, float64) {
 	lon, lat = WGS84toGCJ02(lon, lat)
 	return GCJ02toBD09(lon, lat)

@@ -8,7 +8,7 @@ import (
 	"youyin/response"
 )
 
-//根据查询字符串type获取配置
+// 根据查询字符串type获取配置
 func GetSetting(c *gin.Context) {
 	typeName, err := strconv.Atoi(c.Query("type"))
 	if err != nil {

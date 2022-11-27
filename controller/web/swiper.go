@@ -7,7 +7,7 @@ import (
 	"youyin/response"
 )
 
-//添加轮播图
+// 添加轮播图
 func AddSwiper(c *gin.Context) {
 	var swiper model.Swiper
 	err := c.BindJSON(&swiper)
@@ -23,7 +23,7 @@ func AddSwiper(c *gin.Context) {
 
 }
 
-//修改轮播图
+// 修改轮播图
 func UpdateSwiper(c *gin.Context) {
 	var swiper model.Swiper
 	err := c.BindJSON(&swiper)
